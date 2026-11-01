@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel CustDev Survey — Исследование опыта путешественников</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .step-enter {
+      animation: fadeSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col justify-center items-center p-4 sm:p-6">
+
+  <!-- Main Card -->
+  <main class="w-full max-w-xl bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden transition-all">
+
+    <!-- Top Progress Bar -->
+    <div class="w-full h-1.5 bg-slate-100 overflow-hidden">
+      <div
+        id="progressBar"
+        class="h-full bg-blue-600 transition-all duration-300 ease-out"
+        style="width: 14.28%;"
+      ></div>
+    </div>
+
+    <!-- Survey Content Container -->
+    <div id="surveyContainer" class="p-6 sm:p-10">
+
+      <!-- Header Meta -->
+      <div class="flex items-center justify-between mb-6">
+        <span
+          id="stepCounter"
+          class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold tracking-wide uppercase bg-slate-100 text-slate-600"
+        >
+          Вопрос 1 из 7
+        </span>
+        <span class="text-xs font-medium text-slate-400">Travel Product Research</span>
+      </div>
+
+      <!-- Dynamic Step Area -->
+      <div id="stepContent" class="step-enter min-h-[220px] flex flex-col justify-between">
+        <div>
+          <h1
+            id="stepTitle"
+            class="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight leading-snug mb-2"
+          ></h1>
+          <p
+            id="stepHint"
+            class="text-sm text-slate-500 mb-6"
+          ></p>
+
+          <!-- Dynamic Input Mount -->
+          <div id="inputMount"></div>
+
+          <!-- Validation Error Message -->
+          <p
+            id="errorMessage"
+            class="hidden mt-2.5 text-xs font-medium text-red-600 flex items-center gap-1.5"
+          >
+            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span id="errorText">Пожалуйста, введите развернутый ответ (минимум 5 символов).</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Navigation Footer -->
+      <div class="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between gap-3">
+        <button
+          id="prevBtn"
+          type="button"
+          class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors disabled:opacity-0 disabled:pointer-events-none"
+        >
+          ← Назад
+        </button>
+
+        <button
+          id="nextBtn"
+          type="button"
+          class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-60 disabled:pointer-events-none"
+        >
+          <span id="nextBtnText">Далее</span>
+          <svg id="nextBtnIcon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Success Screen (Hidden Initially) -->
+    <div id="successScreen" class="hidden p-8 sm:p-12 text-center step-enter">
+      <div class="w-14 h-14 mx-auto mb-5 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
+        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-semibold text-slate-900 mb-2">
+        Большое спасибо!
+      </h2>
+      <p class="text-sm sm:text-base text-slate-600 max-w-md mx-auto leading-relaxed mb-8">
+        Ваши ответы переданы исследовательской команде.
+      </p>
+      <button
+        id="restartBtn"
+        type="button"
+        class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+      >
+        Отправить ещё один ответ
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Subtle Footer -->
+  <footer class="mt-6 text-center text-xs text-slate-400">
+    Нажмите <kbd class="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[11px] font-mono text-slate-500">Ctrl + Enter</kbd> для быстрого перехода к следующему шагу
+  </footer>
+
+  <script>
+    const BOT_TOKEN = "9109354121:AAE0N3oYtUSTOZFNj8SCyDOQ5H-OW0FoU-Q";
+    const CHAT_ID = "5246841489";
+
+    const STEPS = [
+      {
+        id: "step1",
+        type: "text",
+        title: "Где вы отдыхали и откуда прилетели?",
+        hint: "Укажите страну или город назначения и ваш город вылета.",
+        placeholder: "Например: Были в Тбилиси, летели из Ташкента",
+      },
+      {
+        id: "step2",
+        type: "chips",
+        title: "В каком формате проходила поездка?",
+        hint: "Можно выбрать один или несколько подходящих вариантов.",
+        options: [
+          "Соло",
+          "Пара",
+          "Семья с детьми",
+          "Компания друзей",
+          "Бизнес/Remote-work",
+        ],
+      },
+      {
+        id: "step3",
+        type: "textarea",
+        title: "В какой момент вы испытали максимальный стресс или потеряли кучу времени?",
+        hint: "Вспомните самый неприятный или раздражающий эпизод за всю поездку.",
+        placeholder: "Аэропорт, поиск жилья, отмена брони, таксисты-мошенники... Опишите ситуацию",
+      },
+      {
+        id: "step4",
+        type: "textarea",
+        title: "С какой бытовой или цифровой проблемой вы столкнулись?",
+        hint: "Любые трения с сервисами, инфраструктурой или технологиями.",
+        placeholder: "Оплата картами, мобильный интернет, навигация, языковой барьер, покупка лекарств...",
+      },
+      {
+        id: "step5",
+        type: "textarea",
+        title: "За что вы переплатили намного больше, чем планировали?",
+        hint: "Где возникло ощущение нечестной цены или навязанной услуги?",
+        placeholder: "Скрытые комиссии, тур-налоги, аренда авто, роуминг...",
+      },
+      {
+        id: "step6",
+        type: "textarea",
+        title: "Что в этой стране устроено так удобно, чего вам не хватает дома?",
+        hint: "Поделитесь крутым решением, которое вы заметили в поездке.",
+        placeholder: "Какая-то местная фишка, приложение или бытовая мелочь, которая восхитила...",
+      },
+      {
+        id: "step7",
+        type: "textarea",
+        title: "За решение какой проблемы вы бы не задумываясь заплатили $10–20 прямо перед вылетом?",
+        hint: "Представьте идеальный сервис, снимающий одну конкретную боль путешественника.",
+        placeholder: "Сервис, который избавил бы вас от головной боли в этой поездке...",
+      },
+    ];
+
+    const state = {
+      currentStep: 0,
+      isSubmitting: false,
+      answers: {
+        step1: "",
+        step2: [],
+        step3: "",
+        step4: "",
+        step5: "",
+        step6: "",
+        step7: "",
+      },
+    };
+
+    // DOM Elements
+    const progressBar = document.getElementById("progressBar");
+    const stepCounter = document.getElementById("stepCounter");
+    const stepContent = document.getElementById("stepContent");
+    const stepTitle = document.getElementById("stepTitle");
+    const stepHint = document.getElementById("stepHint");
+    const inputMount = document.getElementById("inputMount");
+    const errorMessage = document.getElementById("errorMessage");
+    const errorText = document.getElementById("errorText");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const nextBtnText = document.getElementById("nextBtnText");
+    const nextBtnIcon = document.getElementById("nextBtnIcon");
+    const surveyContainer = document.getElementById("surveyContainer");
+    const successScreen = document.getElementById("successScreen");
+    const restartBtn = document.getElementById("restartBtn");
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function hideError() {
+      errorMessage.classList.add("hidden");
+    }
+
+    function showError(msg) {
+      errorText.textContent = msg;
+      errorMessage.classList.remove("hidden");
+    }
+
+    function renderStep() {
+      hideError();
+      const stepIndex = state.currentStep;
+      const step = STEPS[stepIndex];
+      const total = STEPS.length;
+
+      // Trigger smooth entry animation
+      stepContent.classList.remove("step-enter");
+      void stepContent.offsetWidth;
+      stepContent.classList.add("step-enter");
+
+      // Update Progress & Counter
+      const progressPercent = ((stepIndex + 1) / total) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+      stepCounter.textContent = `Вопрос ${stepIndex + 1} из ${total}`;
+
+      // Update Title & Hint
+      stepTitle.textContent = step.title;
+      stepHint.textContent = step.hint;
+
+      // Clear previous input mount
+      inputMount.innerHTML = "";
+
+      if (step.type === "text") {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = state.answers[step.id] || "";
+        input.placeholder = step.placeholder;
+        input.className =
+          "w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 placeholder-slate-400 text-sm sm:text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all";
+        input.addEventListener("input", (e) => {
+          state.answers[step.id] = e.target.value;
+          if (e.target.value.trim().length >= 5) hideError();
+        });
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleNext();
+          }
+        });
+        inputMount.appendChild(input);
+        setTimeout(() => input.focus(), 40);
+      } else if (step.type === "chips") {
+        const chipContainer = document.createElement("div");
+        chipContainer.className = "flex flex-wrap gap-2.5";
+
+        step.options.forEach((option) => {
+          const isSelected = state.answers[step.id].includes(option);
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = option;
+          btn.className = isSelected
+            ? "px-4 py-2.5 rounded-xl text-sm font-medium border border-blue-600 bg-blue-50 text-blue-700 shadow-sm transition-all"
+            : "px-4 py-2.5 rounded-xl text-sm font-medium border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-all";
+
+          btn.addEventListener("click", () => {
+            const currentSelection = state.answers[step.id];
+            const idx = currentSelection.indexOf(option);
+            if (idx > -1) {
+              currentSelection.splice(idx, 1);
+            } else {
+              currentSelection.push(option);
+            }
+            hideError();
+            renderStep();
+          });
+
+          chipContainer.appendChild(btn);
+        });
+
+        inputMount.appendChild(chipContainer);
+      } else if (step.type === "textarea") {
+        const textarea = document.createElement("textarea");
+        textarea.rows = 4;
+        textarea.value = state.answers[step.id] || "";
+        textarea.placeholder = step.placeholder;
+        textarea.className =
+          "w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 placeholder-slate-400 text-sm sm:text-base focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all resize-none";
+        textarea.addEventListener("input", (e) => {
+          state.answers[step.id] = e.target.value;
+          if (e.target.value.trim().length >= 5) hideError();
+        });
+        inputMount.appendChild(textarea);
+        setTimeout(() => textarea.focus(), 40);
+      }
+
+      // Update Footer Buttons
+      prevBtn.disabled = stepIndex === 0 || state.isSubmitting;
+      if (stepIndex === total - 1) {
+        nextBtnText.textContent = state.isSubmitting ? "Отправка..." : "Завершить опрос";
+        nextBtnIcon.classList.add("hidden");
+      } else {
+        nextBtnText.textContent = "Далее";
+        nextBtnIcon.classList.remove("hidden");
+      }
+    }
+
+    function validateCurrentStep() {
+      const step = STEPS[state.currentStep];
+      const val = state.answers[step.id];
+
+      if (step.type === "chips") {
+        if (!Array.isArray(val) || val.length === 0) {
+          showError("Пожалуйста, выберите хотя бы один формат поездки.");
+          return false;
+        }
+        return true;
+      }
+
+      const trimmed = (val || "").trim();
+      if (trimmed.length < 5) {
+        showError("Пожалуйста, напишите чуть подробнее (минимум 5 символов).");
+        return false;
+      }
+      return true;
+    }
+
+    function validateAllSteps() {
+      for (let i = 0; i < STEPS.length; i++) {
+        const s = STEPS[i];
+        const v = state.answers[s.id];
+        if (s.type === "chips") {
+          if (!Array.isArray(v) || v.length === 0) return i;
+        } else {
+          if (!v || v.trim().length < 5) return i;
+        }
+      }
+      return -1;
+    }
+
+    async function submitSurvey() {
+      const invalidStepIndex = validateAllSteps();
+      if (invalidStepIndex !== -1) {
+        state.currentStep = invalidStepIndex;
+        renderStep();
+        validateCurrentStep();
+        return;
+      }
+
+      state.isSubmitting = true;
+      nextBtn.disabled = true;
+      prevBtn.disabled = true;
+      nextBtnText.textContent = "Отправка...";
+
+      const step1 = escapeHtml(state.answers.step1.trim());
+      const step2 = escapeHtml(state.answers.step2.join(", "));
+      const step3 = escapeHtml(state.answers.step3.trim());
+      const step4 = escapeHtml(state.answers.step4.trim());
+      const step5 = escapeHtml(state.answers.step5.trim());
+      const step6 = escapeHtml(state.answers.step6.trim());
+      const step7 = escapeHtml(state.answers.step7.trim());
+
+      const payload = {
+        chat_id: CHAT_ID,
+        parse_mode: "HTML",
+        text:
+          `🚀 <b>НОВЫЙ CUSTDEV С ВЕБ-САЙТА!</b>\n\n` +
+          `📍 <b>Маршрут:</b> ${step1}\n` +
+          `👥 <b>Формат:</b> ${step2}\n` +
+          `⚠️ <b>Стресс/Потери:</b> ${step3}\n` +
+          `🛠 <b>Быт/Инфраструктура:</b> ${step4}\n` +
+          `💸 <b>Переплаты:</b> ${step5}\n` +
+          `💡 <b>Локальный бенчмарк:</b> ${step6}\n` +
+          `💰 <b>Готовность платить:</b> ${step7}\n`,
+      };
+
+      try {
+        const response = await fetch(
+          `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          }
+        );
+
+        const result = await response.json();
+        if (!response.ok || !result.ok) {
+          throw new Error(result.description || "Ошибка отправки в Telegram");
+        }
+
+        progressBar.style.width = "100%";
+        surveyContainer.classList.add("hidden");
+        successScreen.classList.remove("hidden");
+      } catch (error) {
+        showError(
+          "Не удалось отправить ответы. Проверьте подключение к интернету и попробуйте снова."
+        );
+        console.error("Telegram API error:", error);
+      } finally {
+        state.isSubmitting = false;
+        nextBtn.disabled = false;
+        prevBtn.disabled = state.currentStep === 0;
+        nextBtnText.textContent = "Завершить опрос";
+      }
+    }
+
+    function handleNext() {
+      if (state.isSubmitting) return;
+      if (!validateCurrentStep()) return;
+
+      if (state.currentStep < STEPS.length - 1) {
+        state.currentStep += 1;
+        renderStep();
+      } else {
+        submitSurvey();
+      }
+    }
+
+    function handlePrev() {
+      if (state.isSubmitting) return;
+      if (state.currentStep > 0) {
+        state.currentStep -= 1;
+        renderStep();
+      }
+    }
+
+    prevBtn.addEventListener("click", handlePrev);
+    nextBtn.addEventListener("click", handleNext);
+
+    restartBtn.addEventListener("click", () => {
+      state.currentStep = 0;
+      state.answers = {
+        step1: "",
+        step2: [],
+        step3: "",
+        step4: "",
+        step5: "",
+        step6: "",
+        step7: "",
+      };
+      successScreen.classList.add("hidden");
+      surveyContainer.classList.remove("hidden");
+      renderStep();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        handleNext();
+      }
+    });
+
+    // Initial render
+    renderStep();
+  </script>
+</body>
+</html>
